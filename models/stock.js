@@ -5,8 +5,11 @@ const stockSchema = new Schema ({
 
     symbol: String,
     price: Number,
-    shares: Number
-
+    shares: Number,
+    date: {
+        type: Date,
+        default: Date.now
+    }
 })
 
 const Stock = mongoose.model('Stock', stockSchema)

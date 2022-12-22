@@ -1,4 +1,5 @@
 const { expressjwt: jwt } = require("express-jwt");
+require ('dotenv').config()
 
 const isAuthenticated = jwt({
     secret: process.env.TOKEN_SECRET,
@@ -8,6 +9,7 @@ const isAuthenticated = jwt({
   });
 
   function getTokenFromHeaders (req) {
+
   
     if (req.headers.authorization && req.headers.authorization.split(" ")[0] === "Bearer") {
 

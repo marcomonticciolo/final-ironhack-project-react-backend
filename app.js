@@ -1,6 +1,6 @@
 require('dotenv').config()
 
-const starterData = require('./starter-data.json')
+const starterData = require('./starter-sorted-data.json')
 
 const compression = require('compression')
 
@@ -16,24 +16,24 @@ const express = require('express')
 const PORT= process.env.PORT;
 const myApiKey = process.env.API_KEY
 
-let STOCK_DATA = starterData;
+let STOCK_DATA = { stocks: starterData };
 
 const app = express();
 
 app.use(compression())
 
-app.use(cors());
+app.use(cors({
+  origin: "*"
+}));
 
 app.use(express.json())
 
 
-const authRouter = require("./routes/auth.routes");
+const authRouter = require("./routes/auth.routes")
 
 const stockRouter = require('./routes/stock.routes')(STOCK_DATA);
 
-const portfolioRouter = require('./routes/portfolio.routes')
-
-
+const portfolioRouter = require('./routes/portfolio.routes')(STOCK_DATA);
 
 
 
@@ -43,7 +43,7 @@ app.use('/auth', authRouter)
 
 
 app.get('/api/stocks/all', (req, res, next) => {
-    res.json(STOCK_DATA)
+    res.json(STOCK_DATA.stocks)
 })
 
 
@@ -61,12 +61,13 @@ mongoose.connect(process.env.MONGODB_URI)
 
     var stockTask = cron.schedule('*/1 9-20 * * 1-5 ', () =>  {
         axios.get(`https://api.finage.co.uk/snapshot/stock?apikey=${myApiKey}`)
-        // axios.get('https://dog-api.kinduff.com/api/facts')
           .then(r => {
+    
+            const alphabeticalStocks = [...r.data.lastQuotes].sort((a, b) =>
+                a.s > b.s ? 1 : -1,
+            );
       
-            console.log('this is the stock data', r.data)
-      
-            STOCK_DATA = r.data.lastQuotes;
+            STOCK_DATA.stocks = alphabeticalStocks;
     
           })
           .catch(err => console.log(err)) 

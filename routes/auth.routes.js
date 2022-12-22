@@ -91,7 +91,7 @@ router.post("/login", (req, res, next) => {
       .catch((err) => res.send(err));
   });
   
-  router.get("/verify",isAuthenticated, (req, res, next) => {
+  router.get("/verify", isAuthenticated, (req, res, next) => {
     res.json(req.payload)
   });
   
