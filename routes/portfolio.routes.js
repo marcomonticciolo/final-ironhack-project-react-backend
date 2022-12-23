@@ -38,9 +38,7 @@ const portfolioRouterWithStockData = (STOCK_DATA) => {
             
         })
         .then(updatedOrDeletedStock => {
-
-            console.log(updatedOrDeletedStock)
-
+            
             if(updatedOrDeletedStock.shares === 0){
                 return Portfolio.findByIdAndUpdate(req.payload.portfolio, {
                     $inc: {

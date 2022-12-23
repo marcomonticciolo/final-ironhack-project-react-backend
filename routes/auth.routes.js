@@ -10,7 +10,6 @@ const { isAuthenticated }=require('../middleware/jwt')
 
 
 router.post("/signup", (req, res, next) => {
-    console.log("MADE IT TO SIGNUP ROUTE")
   const { email, password, username } = req.body;
 
   if (!email || !password || !username) {
@@ -31,20 +30,18 @@ router.post("/signup", (req, res, next) => {
       });
     })
     .then((createdUser) => {
-      console.log("made it to line 34", createdUser._id)
+
       return Portfolio.create({
         name: "Holdings",
         owner: createdUser._id
       });
     })
     .then((createdPortfolio) => {
-      console.log("made it to line 41")
        return User.findByIdAndUpdate(createdPortfolio.owner, {
         portfolio: createdPortfolio._id
       })
     })
     .then((updatedUser) => {
-      console.log("made it to line 47")
       res.json(updatedUser)
     })
     .catch((err) => res.send(err));
